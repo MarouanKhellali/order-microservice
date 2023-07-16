@@ -1,0 +1,46 @@
+version: '3'
+services:
+  mongo-server:
+    build: ./database
+    volumes:
+      - database-data:/data/db
+    ports:
+      - 27017:27017
+    # networks:
+    #   - network2
+    
+  customers-service:
+    build: ./customers-service
+    ports:
+      - 3002:3002
+    environment:
+      DB_URL: mongodb://mongo-server/orders-db
+    depends_on:
+      - mongo-server 
+    # networks:
+    #   - network2
+  products-service:
+    build: ./products-service
+    ports:
+      - 3000:3000
+    environment:
+      DB_URL: mongodb://mongo-server/orders-db
+    depends_on:
+      - mongo-server 
+    # networks:
+    #   - network2
+  orders-service:
+    build: ./orders-service
+    ports:
+      - 3001:3001    
+    depends_on:
+      - mongo-server
+    environment:
+      DB_URL: mongodb://mongo-server/orders-db
+    # networks:
+    #   - network2    
+volumes:
+  database-data: # Spécifie le nom du volume et le chemin du volume à monter
+# networks: 
+#   network2:
+
